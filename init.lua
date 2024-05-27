@@ -587,6 +587,9 @@ require('lazy').setup({
               },
             },
           },
+          on_attach = function(client, bufnr)
+            vim.keymap.set('n', '<leader>oi', ':GoImports<Enter>', { desc = '[O]rganize [I]mports' })
+          end,
         },
         pyright = {},
         -- rust_analyzer = {},
