@@ -172,6 +172,7 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- Spliting windows
 vim.keymap.set('n', '<leader>v', '<C-W>v', { desc = '[V]ertical split' })
 vim.keymap.set('n', '<leader>h', '<C-W>s', { desc = '[H]orizontal split' })
+vim.keymap.set('n', '<leader>x', ':bd<Enter>', { desc = 'e[X]it buffer' })
 
 -- Easy Comment
 -- vim.keymap.set('n', '<leader>/', 'Vgc', { desc = '[/] Comment' })
