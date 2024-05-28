@@ -175,8 +175,14 @@ vim.keymap.set('n', '<leader>h', '<C-W>s', { desc = '[H]orizontal split' })
 vim.keymap.set('n', '<leader>x', ':bd<Enter>', { desc = 'e[X]it buffer' })
 
 -- Easy Comment
--- vim.keymap.set('n', '<leader>/', 'Vgc', { desc = '[/] Comment' })
--- vim.keymap.set('v', '<leader>/', 'gc', { desc = '[/] Comment' })
+vim.keymap.set('n', '<leader>/', function()
+  require('Comment.api').toggle.linewise.current()
+end, { desc = '[/] Comment' })
+vim.keymap.set('x', '<leader>/', function()
+  local esc = vim.api.nvim_replace_termcodes('<ESC>', true, false, true)
+  vim.api.nvim_feedkeys(esc, 'nx', false)
+  require('Comment.api').toggle.linewise(vim.fn.visualmode())
+end)
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -249,7 +255,13 @@ require('lazy').setup({
   --    require('Comment').setup({})
 
   -- "gc" to comment visual regions/lines
-  { 'numToStr/Comment.nvim', opts = {} },
+  {
+    'numToStr/Comment.nvim',
+    opts = {},
+    config = function()
+      require('Comment').keybindings = function() end
+    end,
+  },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
