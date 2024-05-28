@@ -155,12 +155,18 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- folding
+vim.opt.foldmethod = 'indent'
+vim.opt.foldenable = false
+vim.opt.foldlevel = 99
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
 -- Set highlight on search, but clear on pressing <Esc> in normal mode
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+-- File explorer
 vim.keymap.set('n', '<leader>e', ':NvimTreeOpen<Enter>', { desc = 'Open file [E]xplorer' })
 
 -- Diagnostic keymaps
@@ -271,7 +277,12 @@ require('lazy').setup({
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
     config = function()
-      require('gitsigns').setup()
+      require('gitsigns').setup {
+        preview_config = {
+          border = 'rounded',
+          relative = 'cursor',
+        },
+      }
       vim.keymap.set('n', 'gp', ':Gitsigns preview_hunk<Enter>', { desc = '[G]it [P]review hunk (double to focus)' })
     end,
   },
