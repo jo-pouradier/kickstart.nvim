@@ -53,15 +53,15 @@ return {
         local FloatPreview = require 'float-preview'
         local close_wrap = FloatPreview.close_wrap
 
-        FloatPreview.attach_nvimtree(bufnr)
-
+        -- FloatPreview.attach_nvimtree(bufnr)
         local function opts(desc)
           return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
         end
 
         api.node.open.preview = customTreeFunc.open_or_expand_or_dir_up_with_node_no_edit()
-        api.config.mappings.default_on_attach(bufnr)
+        -- api.config.mappings.default_on_attach(bufnr)
         customTreeFunc.keymaps(api, close_wrap, opts)
+        FloatPreview.attach_nvimtree(bufnr)
       end,
       modified = {
         enable = true,
