@@ -85,7 +85,8 @@ return {
         highlight_git = 'all',
       },
       filters = {
-        dotfiles = false,
+        -- dotfiles = false,
+        enable = false,
       },
       diagnostics = {
         enable = true,
