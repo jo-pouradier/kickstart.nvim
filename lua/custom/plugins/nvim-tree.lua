@@ -45,7 +45,10 @@ local tree_preview = {
 
 return {
   'nvim-tree/nvim-tree.lua',
-  dependencies = tree_preview,
+  dependencies = {
+    'nvim-tree/nvim-web-devicons',
+    tree_preview,
+  },
   config = function()
     require('nvim-tree').setup {
       on_attach = function(bufnr)
@@ -60,8 +63,8 @@ return {
 
         api.node.open.preview = customTreeFunc.open_or_expand_or_dir_up_with_node_no_edit()
         -- api.config.mappings.default_on_attach(bufnr)
-        customTreeFunc.keymaps(api, close_wrap, opts)
         FloatPreview.attach_nvimtree(bufnr)
+        customTreeFunc.keymaps(api, close_wrap, opts)
       end,
       modified = {
         enable = true,

@@ -4,7 +4,7 @@ function M.on_attach_tree(bufnr)
   local api = require 'nvim-tree.api'
   local FloatPreview = require 'float-preview'
   -- api.node.open.preview = Open_or_expand_or_dir_up_with_node_no_edit()
-  api.node.open.preview = M.open_or_expand_or_dir_up_with_node_no_edit()
+  -- api.node.open.preview = M.open_or_expand_or_dir_up_with_node_no_edit()
 
   FloatPreview.attach_nvimtree(bufnr)
   local close_wrap = FloatPreview.close_wrap
@@ -36,8 +36,8 @@ local function open_or_expand_or_dir_up(mode, toggle_group)
   end
 end
 
----Inject the node as the first argument if absent.
----@param fn function function to invoke
+--- Inject the node as the first argument if absent.
+--- @param fn function function to invoke
 local function wrap_node(fn)
   local lib = require 'nvim-tree.lib'
   return function(node, ...)
