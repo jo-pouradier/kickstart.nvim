@@ -190,6 +190,16 @@ vim.keymap.set('n', '<leader>dq', vim.diagnostic.setloclist, { desc = '[D]iagnos
 -- Just use <C-w>v and <C-w>s
 vim.keymap.set('n', '<leader>x', ':bd<Enter>', { desc = 'e[X]it buffer' })
 
+-- Manage tabs
+vim.keymap.set('n', '<tab>', 'gt', { desc = 'go to next tab' })
+vim.keymap.set('n', '<S-tab>', 'gT', { desc = 'go to previous tab' })
+
+-- Manage split size, M = left option on mac keyboard
+vim.keymap.set('n', '<M-<>', '<C-w>5<', { desc = 'split width -' })
+vim.keymap.set('n', '<M->>', '<C-w>5>', { desc = 'split width +' })
+vim.keymap.set('n', '<M-=>', '<C-w>5-', { desc = 'split height -' })
+vim.keymap.set('n', '<M-+>', '<C-w>5+', { desc = 'split height +' })
+
 -- Easy Comment
 vim.keymap.set('n', '<leader>/', function()
   require('Comment.api').toggle.linewise.current()
@@ -207,6 +217,7 @@ end)
 -- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
+vim.keymap.set('t', '<C-x>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
 -- TIP: Disable arrow keys in normal mode
 vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
