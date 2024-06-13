@@ -85,11 +85,12 @@ return {
       renderer = {
         group_empty = true,
         add_trailing = true,
-        highlight_git = 'all',
+        highlight_git = true,
       },
       filters = {
-        -- dotfiles = false,
-        enable = false,
+        dotfiles = false,
+        git_ignored = false,
+        -- enable = false,
       },
       diagnostics = {
         enable = true,
