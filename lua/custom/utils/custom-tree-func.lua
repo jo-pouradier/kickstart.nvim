@@ -4,7 +4,7 @@ function M.on_attach_tree(bufnr)
   local api = require 'nvim-tree.api'
   local FloatPreview = require 'float-preview'
   -- api.node.open.preview = Open_or_expand_or_dir_up_with_node_no_edit()
-  -- api.node.open.preview = M.open_or_expand_or_dir_up_with_node_no_edit()
+  api.node.open.preview = M.open_or_expand_or_dir_up_with_node_no_edit()
 
   FloatPreview.attach_nvimtree(bufnr)
   local close_wrap = FloatPreview.close_wrap
