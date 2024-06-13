@@ -396,6 +396,7 @@ require('lazy').setup({
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      'andrew-george/telescope-themes',
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -433,6 +434,21 @@ require('lazy').setup({
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
+          },
+          themes = {
+            ignore = {},
+            enable_previewer = true,
+            enable_live_preview = true,
+            layout_config = {
+              horizontal = {
+                width = 0.5,
+                height = 0.7,
+              },
+            },
+          },
+          persist = {
+            enabled = true,
+            path = vim.fn.stdpath 'config' .. '/lua/custom/plugins/colorscheme.lua',
           },
         },
       }
