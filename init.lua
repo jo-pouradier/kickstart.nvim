@@ -83,7 +83,24 @@ I hope you enjoy your Neovim journey,
 
 P.S. You can delete this when you're done too. It's your config now! :)
 --]]
-
+-- vim.api.nvim_create_augroup('PrintNewBufferName', { clear = true })
+vim.api.nvim_create_autocmd('User', {
+  -- group = 'PrintNewBufferName',
+  -- pattern = 'TelescopePrompt',
+  pattern = '<term>',
+  callback = function(events)
+    print('New buffer: ' .. vim.fn.expand '<afile>' .. ' super nice')
+    local ft = vim.api.nvim_buf_get_option(events.buf, 'filetype')
+    print('FileType: ' .. ft .. ' ok')
+    -- print('type of ft: ' .. type(ft))
+  end,
+})
+vim.api.nvim_create_augroup('CustomAutocmd', { clear = true })
+vim.api.nvim_create_autocmd('TermOpen', {
+  group = 'CustomAutocmd',
+  pattern = '*',
+  command = 'startinsert',
+})
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
