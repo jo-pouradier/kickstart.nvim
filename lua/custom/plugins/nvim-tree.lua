@@ -43,7 +43,7 @@ local tree_preview = {
   },
 }
 
-return {
+local tree = {
   'nvim-tree/nvim-tree.lua',
   dependencies = {
     'nvim-tree/nvim-web-devicons',
@@ -100,6 +100,17 @@ return {
         enable = true,
         -- update_cwd = true,
       },
+      -- hijack_unnamed_buffer_when_opening = true,
+      -- -- hijack_netrw = false,
+      -- disable_netrw = true, -- disable :Explore
+      -- hijack_directories = {
+      --   enable = true,
+      --   auto_open = false,
+      -- },
+      -- log = {
+      --   enable = true,
+      -- },
     }
   end,
 }
+return tree
