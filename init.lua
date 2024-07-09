@@ -688,19 +688,21 @@ require('lazy').setup({
           end,
         },
         pyright = {},
-        pylsp = {
+        pylsp = { -- for more use the cmd PylspInstall
           settings = {
             pylsp = {
               plugins = {
                 rope_autoimport = {
                   enable = true,
                 },
-                rope_completion = { enabled = true },
+                rope_completion = {
+                  enabled = true,
+                },
               },
             },
           },
         },
-        ruff_lsp = {},
+        -- ruff_lsp = {}, -- use python-lsp-ruff instead
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -740,6 +742,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'python-lsp-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
