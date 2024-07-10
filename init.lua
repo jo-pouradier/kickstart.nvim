@@ -701,27 +701,24 @@ require('lazy').setup({
           on_attach = function(client, bufnr)
             local signature_setup = {
               bind = true, -- This is mandatory, otherwise border config won't get registered.
-              handler_opts = {
-                border = 'rounded',
-              },
             }
             require('lsp_signature').on_attach(signature_setup, bufnr) -- Note: add in lsp client on-attach
           end,
         },
-        pylsp = { -- for more use the cmd PylspInstall
-          settings = {
-            pylsp = {
-              plugins = {
-                rope_autoimport = {
-                  enable = true,
-                },
-                rope_completion = {
-                  enabled = true,
-                },
-              },
-            },
-          },
-        },
+        -- pylsp = { -- for more use the cmd PylspInstall
+        --   settings = {
+        --     pylsp = {
+        --       plugins = {
+        --         rope_autoimport = {
+        --           enable = true,
+        --         },
+        --         rope_completion = {
+        --           enabled = true,
+        --         },
+        --       },
+        --     },
+        --   },
+        -- },
         -- ruff_lsp = {}, -- use python-lsp-ruff instead
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -781,6 +778,7 @@ require('lazy').setup({
     end,
   },
   { -- with pyright we dont have auto complete for params (pylance and pylsp does) I use this to get the signature
+    -- NOTE: use C-x to close the popup
     'ray-x/lsp_signature.nvim',
     event = 'VeryLazy',
     opts = {},
