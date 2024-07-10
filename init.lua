@@ -687,7 +687,27 @@ require('lazy').setup({
             vim.keymap.set('n', '<leader>oi', ':GoImports<Enter>', { desc = '[O]rganize [I]mports' })
           end,
         },
-        pyright = {},
+        pyright = {
+          settings = {
+            python = {
+              analysis = {
+                autoSearchPaths = true,
+                autoImportCompletions = true,
+                useLibraryCodeForTypes = true,
+                diagnosticMode = 'workspace',
+              },
+            },
+          },
+          on_attach = function(client, bufnr)
+            local signature_setup = {
+              bind = true, -- This is mandatory, otherwise border config won't get registered.
+              handler_opts = {
+                border = 'rounded',
+              },
+            }
+            require('lsp_signature').on_attach(signature_setup, bufnr) -- Note: add in lsp client on-attach
+          end,
+        },
         pylsp = { -- for more use the cmd PylspInstall
           settings = {
             pylsp = {
@@ -760,6 +780,14 @@ require('lazy').setup({
       }
     end,
   },
+  { -- with pyright we dont have auto complete for params (pylance and pylsp does) I use this to get the signature
+    'ray-x/lsp_signature.nvim',
+    event = 'VeryLazy',
+    opts = {},
+    config = function(_, opts)
+      require('lsp_signature').setup(opts)
+    end,
+  },
 
   { -- Autoformat
     'stevearc/conform.nvim',
@@ -818,12 +846,12 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
       },
       'saadparwaiz1/cmp_luasnip',
@@ -831,8 +859,10 @@ require('lazy').setup({
       -- Adds other completion capabilities.
       --  nvim-cmp does not ship with all sources by default. They are split
       --  into multiple repos for maintenance purposes.
+      'hrsh7th/cmp-buffer',
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-path',
+      'hrsh7th/cmp-cmdline',
     },
     config = function()
       -- See `:help cmp`
@@ -903,7 +933,13 @@ require('lazy').setup({
         sources = {
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
+          { name = 'buffer' },
           { name = 'path' },
+        },
+        window = {
+          -- Add borders to completions popups
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
         },
       }
     end,
@@ -1009,7 +1045,7 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.debug',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
   -- require 'kickstart.plugins.neo-tree',
