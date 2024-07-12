@@ -164,9 +164,9 @@ vim.opt.splitbelow = true
 --  and `:help 'listchars'`
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
-vim.opt.tabstop = 2
-vim.opt.softtabstop = 2
-vim.opt.shiftwidth = 2
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 
 -- Preview substitutions live, as you type!
@@ -515,6 +515,7 @@ require('lazy').setup({
   },
 
   { -- LSP Configuration & Plugins
+    -- NOTE: completion window can be closed with C-e
     'neovim/nvim-lspconfig',
     dependencies = {
       -- Automatically install LSPs and related tools to stdpath for Neovim
@@ -778,15 +779,15 @@ require('lazy').setup({
     end,
   },
   { -- with pyright we dont have auto complete for params (pylance and pylsp does) I use this to get the signature
-    -- NOTE: use C-x to close the popup
     'ray-x/lsp_signature.nvim',
     event = 'VeryLazy',
-    opts = {},
+    opts = {
+      -- toggle_key = '<M-x>',
+    },
     config = function(_, opts)
       require('lsp_signature').setup(opts)
     end,
   },
-
   { -- Autoformat
     'stevearc/conform.nvim',
     lazy = false,
@@ -826,7 +827,7 @@ require('lazy').setup({
 
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
-    event = 'InsertEnter',
+    event = { 'InsertEnter', 'CmdlineEnter' },
     dependencies = {
       -- Snippet Engine & its associated nvim-cmp source
       {
