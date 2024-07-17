@@ -485,6 +485,7 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = '[S]earch [D]iagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = '[S]earch [R]esume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader>sc', ':TodoTelescope<CR>', { desc = '[S]earch all hilighted comments' })
       vim.keymap.set('n', '<leader><leader>', function()
         builtin.buffers { sort_lastused = true, sort_mru = true, ignore_current_buffer = true }
       end, { desc = '[ ] Find existing buffers' })
@@ -1006,7 +1007,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'go', 'python', 'css' },
+      ensure_installed = { 'bash', 'html', 'lua', 'luadoc', 'markdown', 'go', 'python', 'css', 'comment', 'json' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
