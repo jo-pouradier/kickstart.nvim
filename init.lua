@@ -707,6 +707,10 @@ require('lazy').setup({
             require('lsp_signature').on_attach(signature_setup, bufnr) -- Note: add in lsp client on-attach
           end,
         },
+        bashls = {
+          cmd = { 'bash-language-server', 'start' },
+          filetypes = { 'sh', 'bash' },
+        },
         -- pylsp = { -- for more use the cmd PylspInstall
         --   settings = {
         --     pylsp = {
@@ -761,7 +765,7 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
-        'python-lsp-server',
+        'bash-language-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
