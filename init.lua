@@ -286,6 +286,7 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
+  { 'catppuccin/nvim', name = 'catppuccin' },
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
@@ -711,6 +712,22 @@ require('lazy').setup({
           cmd = { 'bash-language-server', 'start' },
           filetypes = { 'sh', 'bash' },
         },
+        -- volar = {
+        --   filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' },
+        -- },
+        ['vue-language-server'] = { filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' } },
+        ['typescript-language-server'] = {
+          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
+          init_options = {
+            plugins = {
+              {
+                name = '@vue/typescript-plugin',
+                location = vim.fn.stdpath 'data' .. '/mason/packages/vue-language-server/node_modules/@vue/language-server',
+                languages = { 'vue' },
+              },
+            },
+          },
+        },
         -- pylsp = { -- for more use the cmd PylspInstall
         --   settings = {
         --     pylsp = {
@@ -1011,7 +1028,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'html', 'lua', 'luadoc', 'markdown', 'go', 'python', 'css', 'comment', 'json' },
+      ensure_installed = { 'bash', 'html', 'lua', 'luadoc', 'markdown', 'go', 'python', 'css', 'comment', 'json', 'javascript', 'typescript' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
