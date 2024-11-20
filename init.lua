@@ -712,22 +712,6 @@ require('lazy').setup({
           cmd = { 'bash-language-server', 'start' },
           filetypes = { 'sh', 'bash' },
         },
-        -- volar = {
-        --   filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' },
-        -- },
-        ['vue-language-server'] = { filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' } },
-        ['typescript-language-server'] = {
-          filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue' },
-          init_options = {
-            plugins = {
-              {
-                name = '@vue/typescript-plugin',
-                location = vim.fn.stdpath 'data' .. '/mason/packages/vue-language-server/node_modules/@vue/language-server',
-                languages = { 'vue' },
-              },
-            },
-          },
-        },
         -- pylsp = { -- for more use the cmd PylspInstall
         --   settings = {
         --     pylsp = {
@@ -783,6 +767,8 @@ require('lazy').setup({
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
         'bash-language-server',
+        'vue-language-server',
+        'typescript-language-server',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -796,6 +782,62 @@ require('lazy').setup({
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
+        },
+      }
+
+      local lspconfig = require 'lspconfig'
+      --
+      lspconfig.volar.setup {
+        filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' },
+        on_attach = function(_, bufnr)
+          local params = {
+            command = '_typescript.organizeImports',
+            arguments = { vim.api.nvim_buf_get_name(bufnr) },
+          }
+
+          vim.keymap.set('n', '<leader>oi', function()
+            vim.lsp.buf.execute_command(params)
+          end, { desc = '[O]rganize [I]mports' })
+        end,
+        init_options = {
+          -- typescript = {
+          --   tsdk = '',
+          -- },
+          languageFeatures = {
+            implementation = true, -- new in @volar/vue-language-server v0.33
+            references = true,
+            definition = true,
+            typeDefinition = true,
+            callHierarchy = true,
+            hover = true,
+            rename = true,
+            renameFileRefactoring = true,
+            signatureHelp = true,
+            codeAction = true,
+            workspaceSymbol = true,
+            completion = {
+              defaultTagNameCase = 'both',
+              defaultAttrNameCase = 'kebabCase',
+              getDocumentNameCasesRequest = false,
+              getDocumentSelectionRequest = false,
+            },
+          },
+        },
+      }
+      lspconfig.tsserver.setup {
+        init_options = {
+          plugins = {
+            {
+              name = '@vue/typescript-plugin',
+              location = vim.fn.stdpath 'data' .. '/mason/packages/vue-language-server/node_modules/@vue/language-server',
+              languages = { 'vue', 'javascript', 'typescript' },
+            },
+          },
+        },
+        filetypes = {
+          'vue',
+          'javascript',
+          'typescript',
         },
       }
     end,
