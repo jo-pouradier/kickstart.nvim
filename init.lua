@@ -849,7 +849,7 @@ require('lazy').setup({
       local lspconfig = require 'lspconfig'
       --
       lspconfig.volar.setup {
-        filetypes = { 'typescript', 'javascript', 'javascriptreact', 'typescriptreact', 'vue', 'json' },
+        filetypes = { 'typescript', 'javascript', 'vue', 'json' },
         on_attach = function(_, bufnr)
           local params = {
             command = '_typescript.organizeImports',
@@ -885,13 +885,13 @@ require('lazy').setup({
           },
         },
       }
-      lspconfig.tsserver.setup {
+      lspconfig.ts_ls.setup {
         init_options = {
           plugins = {
             {
               name = '@vue/typescript-plugin',
               location = vim.fn.stdpath 'data' .. '/mason/packages/vue-language-server/node_modules/@vue/language-server',
-              languages = { 'vue', 'javascript', 'typescript' },
+              languages = { 'vue', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact' },
             },
           },
         },
