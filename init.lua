@@ -1,4 +1,5 @@
 --[[
+--
 
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
@@ -304,14 +305,13 @@ require('lazy').setup({
   --    require('Comment').setup({})
 
   -- "gc" to comment visual regions/lines
-  -- TODO: check if still working, delete if yes
-  -- {
-  --   'numToStr/Comment.nvim',
-  --   opts = {},
-  --   config = function()
-  --     require('Comment').keybindings = function() end
-  --   end,
-  -- },
+  {
+    'numToStr/Comment.nvim',
+    opts = {},
+    config = function()
+      require('Comment').keybindings = function() end
+    end,
+  },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -658,7 +658,7 @@ require('lazy').setup({
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
           map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
-          
+
           -- Opens a popup that displays documentation about the word under your cursor
           --  See `:help K` for why this keymap.
           -- TODO: still working ?
@@ -948,11 +948,11 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        python = { "black", "isort" },
+        python = { 'black', 'isort' },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        javascript = {"eslint", "prettierd", "prettier", stop_after_first = true },
-        typescript = {"eslint", "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'eslint', 'prettierd', 'prettier', stop_after_first = true },
+        typescript = { 'eslint', 'prettierd', 'prettier', stop_after_first = true },
       },
     },
   },
@@ -1111,7 +1111,25 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
+      local ai = require 'mini.ai'
+      local spec_treesitter = ai.gen_spec.treesitter
+      ai.setup {
+        n_lines = 500,
+        custom_textobjects = {
+          -- s = { '%[%[().-()%]%]' },
+          F = spec_treesitter { a = '@function.outer', i = '@function.inner' },
+          -- F = {
+          --   a = function()
+          --     return require('nvim-treesitter.textobjects.select').select_textobject '@funtion.inner'
+          --   end,
+          --   i = function()
+          --     return require('nvim-treesitter.textobjects.select').select_textobject '@funtion.outer'
+          --   end,
+          -- },
+          -- f = spec_treesitter { a = '@function.outer', i = '@function.inner' },
+          -- i = spec_treesitter { a = '@conditional.outer', i = '@conditional.inner' },
+        },
+      }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
@@ -1145,7 +1163,22 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'go', 'python', 'css', 'comment', 'json', 'javascript', 'typescript' },
+      ensure_installed = {
+        'bash',
+        'html',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'go',
+        'python',
+        'css',
+        'comment',
+        'json',
+        'javascript',
+        'typescript',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1164,6 +1197,11 @@ require('lazy').setup({
     --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
     --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
+  },
+  {
+    'nvim-treesitter/nvim-treesitter-textobjects',
+    after = 'nvim-treesitter',
+    requires = 'nvim-treesitter/nvim-treesitter',
   },
 
   -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
