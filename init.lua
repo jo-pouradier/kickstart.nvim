@@ -1,6 +1,4 @@
 --[[
---
-
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -1118,16 +1116,8 @@ require('lazy').setup({
         custom_textobjects = {
           -- s = { '%[%[().-()%]%]' },
           F = spec_treesitter { a = '@function.outer', i = '@function.inner' },
-          -- F = {
-          --   a = function()
-          --     return require('nvim-treesitter.textobjects.select').select_textobject '@funtion.inner'
-          --   end,
-          --   i = function()
-          --     return require('nvim-treesitter.textobjects.select').select_textobject '@funtion.outer'
-          --   end,
-          -- },
-          -- f = spec_treesitter { a = '@function.outer', i = '@function.inner' },
-          -- i = spec_treesitter { a = '@conditional.outer', i = '@conditional.inner' },
+          f = spec_treesitter { a = '@function.outer', i = '@function.inner' },
+          i = spec_treesitter { a = '@conditional.outer', i = '@conditional.inner' },
         },
       }
 
