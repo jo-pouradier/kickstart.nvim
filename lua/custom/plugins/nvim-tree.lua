@@ -65,6 +65,8 @@ local tree = {
         -- api.config.mappings.default_on_attach(bufnr)
         FloatPreview.attach_nvimtree(bufnr)
         customTreeFunc.keymaps(api, close_wrap, opts)
+
+        vim.keymap.set('n', '?', api.tree.toggle_help, opts 'Help')
       end,
       modified = {
         enable = true,
