@@ -573,6 +573,7 @@ require('lazy').setup({
       { 'williamboman/mason.nvim', config = true }, -- NOTE: Must be loaded before dependants
       'williamboman/mason-lspconfig.nvim',
       'WhoIsSethDaniel/mason-tool-installer.nvim',
+      'nvim-java/nvim-java',
 
       -- Useful status updates for LSP.
       -- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
@@ -832,7 +833,36 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
+      local function get_sdkman_jdks()
+        local sdkman_java_path = vim.fn.expand '~/.sdkman/candidates/java/'
+        local jdks = {}
+
+        -- List all installed JDK versions
+        local handle = io.popen('ls -1 ' .. sdkman_java_path)
+        if not handle then
+          return {}
+        end
+
+        local default_jdk = vim.fn.resolve(sdkman_java_path .. 'current') -- Follow symlink to default JDK
+
+        for jdk_name in handle:lines() do
+          local jdk_path = sdkman_java_path .. jdk_name
+          table.insert(jdks, {
+            name = jdk_name,
+            path = jdk_path,
+            default = (jdk_path == default_jdk), -- Check if it's the default JDK
+          })
+        end
+        handle:close()
+
+        return jdks
+      end
+
+      -- Example usage:
+      local jdks = get_sdkman_jdks()
       require('mason-lspconfig').setup {
+        ensure_installed = {},
+        automatic_installation = {},
         handlers = {
           function(server_name)
             local server = servers[server_name] or {}
@@ -842,11 +872,22 @@ require('lazy').setup({
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
+          jdtls = function()
+            require('java').setup {}
+            require('lspconfig').jdtls.setup {
+              settings = {
+                java = {
+                  configuration = {
+                    runtimes = get_sdkman_jdks(),
+                  },
+                },
+              },
+            }
+          end,
         },
       }
 
       local lspconfig = require 'lspconfig'
-      --
       lspconfig.volar.setup {
         filetypes = { 'typescript', 'javascript', 'vue', 'json' },
         on_attach = function(_, bufnr)
