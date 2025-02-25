@@ -482,6 +482,17 @@ require('lazy').setup({
         --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
         --   },
         -- },
+        defaults = {
+          file_ignore_patterns = {
+            'node_modules/.*',
+            '.git/.*',
+            -- '*.class',
+            '**/build/',
+            '**/target/',
+            '**/lib/',
+            '**/libs/',
+          },
+        },
         -- pickers = {}
         extensions = {
           ['ui-select'] = {
@@ -877,6 +888,7 @@ require('lazy').setup({
             require('lspconfig').jdtls.setup {
               settings = {
                 java = {
+                  signatureHelp = { enabled = true },
                   configuration = {
                     runtimes = get_sdkman_jdks(),
                   },
