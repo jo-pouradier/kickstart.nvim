@@ -1,72 +1,106 @@
-local customTreeFunc = require 'custom.utils.custom-tree-func'
+local calculate_window_size = function(width_ratio, height_ratio, col_offset, margin)
+  local ui_info = vim.api.nvim_list_uis()[1]
+  local gwidth = ui_info.width
+  local gheight = ui_info.height
+  local width = math.floor(gwidth * width_ratio)
+  local height = math.floor(gheight * height_ratio)
+  local col = (gwidth - width) * col_offset
+  print(vim.inspect(width))
 
-local tree_preview = {
-  'JMarkin/nvim-tree.lua-float-preview',
-  lazy = true,
-  -- -- default
-  opts = {
-    -- Whether the float preview is enabled by default. When set to false, it has to be "toggled" on.
-    toggled_on = true,
-    -- wrap nvimtree commands
-    wrap_nvimtree_commands = true,
-    -- lines for scroll
-    scroll_lines = 20,
-    -- window config
-    window = {
-      wrap = false,
-      trim_height = false,
-      open_win_config = customTreeFunc.tree_preview_window_size,
-    },
-    mapping = {
-      -- scroll down float buffer
-      down = { '<C-d>' },
-      -- scroll up float buffer
-      up = { '<C-e>', '<C-u>' },
-      -- enable/disable float windows
-      toggle = { '<C-x>' },
-    },
-    -- hooks if return false preview doesn't shown
-    hooks = {
-      pre_open = function(path)
-        -- if file > 5 MB or not text -> not preview
-        local size = require('float-preview.utils').get_size(path)
-        if type(size) ~= 'number' then
-          return false
-        end
-        local is_text = require('float-preview.utils').is_text(path)
-        return size < 5 and is_text
-      end,
-      post_open = function(bufnr)
-        return true
-      end,
-    },
-  },
-}
+  return {
+    width = width,
+    height = height,
+    row = (gheight - height) * 0.5,
+    col = col + (margin or 0),
+  }
+end
 
-local tree = {
+return {
   'nvim-tree/nvim-tree.lua',
   dependencies = {
     'nvim-tree/nvim-web-devicons',
-    tree_preview,
+    {
+      'jo-pouradier/nvim-tree.lua-float-preview',
+      branch = 'feat/enable-preview-with-key',
+      lazy = true,
+      -- default
+      opts = {
+        toggled_on = true,
+        auto_preview = false,
+        wrap_nvimtree_commands = true,
+        scroll_lines = 20,
+        window = {
+          border = 'rounded',
+          wrap = false,
+          trim_height = false,
+          open_win_config = function()
+            local rect = calculate_window_size(0.25, 0.7, 0.5, 13)
+            return {
+              style = 'minimal',
+              relative = 'editor',
+              border = 'single',
+              row = rect.row,
+              col = rect.col,
+              width = rect.width,
+              height = rect.height,
+            }
+          end,
+        },
+        mapping = {
+          -- scroll down float buffer
+          down = { '<C-d>' },
+          -- scroll up float buffer
+          up = { '<C-e>', '<C-u>' },
+          -- enable/disable float windows
+          toggle = { '<C-x>' },
+        },
+        -- hooks if return false preview doesn't shown
+        hooks = {
+          pre_open = function(path)
+            -- if file > 5 MB or not text -> not preview
+            local size = require('float-preview.utils').get_size(path)
+            if type(size) ~= 'number' then
+              return false
+            end
+            local is_text = require('float-preview.utils').is_text(path)
+            return size < 5 and is_text
+          end,
+          post_open = function(bufnr)
+            return true
+          end,
+        },
+      },
+    },
   },
+  -- },
   config = function()
     require('nvim-tree').setup {
       on_attach = function(bufnr)
         local api = require 'nvim-tree.api'
         local FloatPreview = require 'float-preview'
+        FloatPreview.attach_nvimtree(bufnr)
         local close_wrap = FloatPreview.close_wrap
 
-        -- FloatPreview.attach_nvimtree(bufnr)
         local function opts(desc)
           return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
         end
+        api.config.mappings.default_on_attach(bufnr)
 
-        api.node.open.preview = customTreeFunc.open_or_expand_or_dir_up_with_node_no_edit()
-        -- api.config.mappings.default_on_attach(bufnr)
-        FloatPreview.attach_nvimtree(bufnr)
-        customTreeFunc.keymaps(api, close_wrap, opts)
-
-        vim.keymap.set('n', '?', api.tree.toggle_help, opts 'Help')
+        vim.keymap.set('n', '<C-t>', close_wrap(api.node.open.tab), opts 'Open: New Tab')
+        vim.keymap.set('n', '<C-v>', close_wrap(api.node.open.vertical), opts 'Open: Vertical Split')
+        vim.keymap.set('n', '<C-s>', close_wrap(api.node.open.horizontal), opts 'Open: Horizontal Split')
+        vim.keymap.set('n', '<CR>', close_wrap(api.node.open.edit), opts 'Open')
+        vim.keymap.set('n', '<Tab>', function()
+          api.node.open.preview()
+          vim.cmd 'TogglePreviewFile'
+        end, opts 'Open folder / preview file')
+        vim.keymap.set('n', 'o', close_wrap(api.node.open.edit), opts 'Open')
+        vim.keymap.set('n', 'O', close_wrap(api.node.open.no_window_picker), opts 'Open: No Window Picker')
+        vim.keymap.set('n', 'a', close_wrap(api.fs.create), opts 'Create')
+        vim.keymap.set('n', 'd', close_wrap(api.fs.remove), opts 'Delete')
+        vim.keymap.set('n', 'r', close_wrap(api.fs.rename), opts 'Rename')
+        vim.keymap.set('n', 'q', close_wrap(api.tree.close), opts 'Close')
+        vim.keymap.set('n', '<ESC>', close_wrap(api.tree.close), opts 'Close')
       end,
       modified = {
         enable = true,
@@ -76,12 +110,20 @@ local tree = {
         sorter = 'case_sensitive',
       },
       view = {
-        number = true,
-        relativenumber = true,
-        width = 20,
         float = {
           enable = true,
-          open_win_config = customTreeFunc.tree_window_size,
+          open_win_config = function()
+            local rect = calculate_window_size(0.25, 0.7, 0.25)
+            vim.notify(vim.inspect(rect))
+            return {
+              border = 'rounded',
+              relative = 'editor',
+              row = rect.row,
+              col = rect.col,
+              width = rect.width,
+              height = rect.height,
+            }
+          end,
         },
       },
       renderer = {
@@ -92,7 +134,6 @@ local tree = {
       filters = {
         dotfiles = false,
         git_ignored = false,
-        -- enable = false,
       },
       diagnostics = {
         enable = true,
@@ -100,19 +141,7 @@ local tree = {
       },
       update_focused_file = {
         enable = true,
-        -- update_cwd = true,
       },
-      -- hijack_unnamed_buffer_when_opening = true,
-      -- -- hijack_netrw = false,
-      -- disable_netrw = true, -- disable :Explore
-      -- hijack_directories = {
-      --   enable = true,
-      --   auto_open = false,
-      -- },
-      -- log = {
-      --   enable = true,
-      -- },
     }
   end,
 }
-return tree
