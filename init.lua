@@ -683,7 +683,7 @@ require('lazy').setup({
           --
           -- When you move your cursor, the highlights will be cleared (the second autocommand).
           local client = vim.lsp.get_client_by_id(event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
             local highlight_augroup = vim.api.nvim_create_augroup('kickstart-lsp-highlight', { clear = false })
             vim.api.nvim_create_autocmd({ 'CursorHold', 'CursorHoldI' }, {
               buffer = event.buf,
@@ -710,7 +710,7 @@ require('lazy').setup({
           -- code, if the language server you are using supports them
           --
           -- This may be unwanted, since they displace some of your code
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
             end, '[T]oggle Inlay [H]ints')
@@ -822,7 +822,6 @@ require('lazy').setup({
             },
           },
         },
-        jdtls = {},
       }
 
       -- Ensure the servers and tools above are installed
@@ -844,33 +843,6 @@ require('lazy').setup({
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
-      local function get_sdkman_jdks()
-        local sdkman_java_path = vim.fn.expand '~/.sdkman/candidates/java/'
-        local jdks = {}
-
-        -- List all installed JDK versions
-        local handle = io.popen('ls -1 ' .. sdkman_java_path)
-        if not handle then
-          return {}
-        end
-
-        local default_jdk = vim.fn.resolve(sdkman_java_path .. 'current') -- Follow symlink to default JDK
-
-        for jdk_name in handle:lines() do
-          local jdk_path = sdkman_java_path .. jdk_name
-          table.insert(jdks, {
-            name = jdk_name,
-            path = jdk_path,
-            default = (jdk_path == default_jdk), -- Check if it's the default JDK
-          })
-        end
-        handle:close()
-
-        return jdks
-      end
-
-      -- Example usage:
-      local jdks = get_sdkman_jdks()
       require('mason-lspconfig').setup {
         ensure_installed = {},
         automatic_installation = {},
@@ -883,19 +855,10 @@ require('lazy').setup({
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
           end,
-          jdtls = function()
-            require('java').setup {}
-            require('lspconfig').jdtls.setup {
-              settings = {
-                java = {
-                  signatureHelp = { enabled = true },
-                  configuration = {
-                    runtimes = get_sdkman_jdks(),
-                  },
-                },
-              },
-            }
-          end,
+          -- jdtls = function()
+          --   require('java').setup {}
+          --   require('lspconfig').jdtls.setup {}
+          -- end,
         },
       }
 
@@ -909,7 +872,7 @@ require('lazy').setup({
           }
 
           vim.keymap.set('n', '<leader>oi', function()
-            vim.lsp.buf.execute_command(params)
+            vim.lsp.buf.code_action(params)
           end, { desc = '[O]rganize [I]mports' })
         end,
         init_options = {
@@ -999,12 +962,15 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
         python = { 'black', 'isort' },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
         javascript = { 'eslint', 'prettierd', 'prettier', stop_after_first = true },
         typescript = { 'eslint', 'prettierd', 'prettier', stop_after_first = true },
+        java = { 'google-java-format' },
+      },
+      formatters = {
+        ['google-java-format'] = {
+          prepend_args = { '--aosp' }, -- Ensure 4-space indentation
+        },
       },
     },
   },
