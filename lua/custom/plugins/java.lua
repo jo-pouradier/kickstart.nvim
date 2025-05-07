@@ -68,7 +68,7 @@ return {
         workspace_dir,
       },
       root_dir = require('jdtls.setup').find_root { '.git', 'mvnw', 'gradlew', 'pom.xml', 'build.gradle' },
-      capabilities = require('lspconfig').common_capabilities(),
+      capabilities = require('lspconfig').capabilities(),
       settings = {
         java = {
           signatureHelp = { enabled = true },
