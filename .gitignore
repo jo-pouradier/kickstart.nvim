@@ -1,7 +1,3 @@
-tags
-test.sh
-.luarc.json
-nvim
-
 spell/
+lua/config/colorscheme.lua
 lazy-lock.json
